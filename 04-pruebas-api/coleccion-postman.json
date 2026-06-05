@@ -1,0 +1,564 @@
+{
+	"info": {
+		"name": "SAFAB - AppEducativa",
+		"description": "Coleccion de pruebas de API para el sistema SAFAB (Sistema Adaptativo de Funciones en Algoritmia Basica). Cubre los modulos de Login, Tipo de Pregunta (Maestra) y Pregunta (Transaccional).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Login exitoso",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"La respuesta contiene token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('token');",
+									"});",
+									"pm.test(\"La respuesta contiene el nombre del usuario\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('nombre');",
+									"});",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set('token', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"adminSuper@gmail.com\",\n    \"clave\": \"123456789Aa$\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/login",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login contrasena incorrecta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"pm.test(\"La respuesta no esta vacia\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"adminSuper@gmail.com\",\n    \"clave\": \"claveIncorrecta123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/login",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login sin datos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"La respuesta contiene mensaje de error\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/login",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tipo Pregunta (Maestra)",
+			"item": [
+				{
+					"name": "Listar tipos de pregunta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"La respuesta es un arreglo\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"pm.test(\"La lista no esta vacia\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/tipo-pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "tipo-pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Crear tipo de pregunta valido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 201 o 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"pm.test(\"La respuesta no esta vacia\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Tipo Prueba Postman\",\n    \"descripcion\": \"Tipo creado desde Postman para pruebas\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/tipo-pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "tipo-pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Crear tipo de pregunta sin nombre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"La respuesta contiene mensaje de error\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"descripcion\": \"Sin nombre obligatorio\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/tipo-pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "tipo-pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Editar tipo de pregunta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"La respuesta no esta vacia\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"nombre\": \"Seleccion Multiple Actualizada\",\n    \"descripcion\": \"Descripcion actualizada desde Postman\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/tipo-pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "tipo-pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar tipo de pregunta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200 o 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/tipo-pregunta?id=4",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "tipo-pregunta"],
+							"query": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Pregunta (Transaccional)",
+			"item": [
+				{
+					"name": "Listar preguntas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"La respuesta es un arreglo\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"pm.test(\"La lista no esta vacia\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Crear pregunta valida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 201 o 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"pm.test(\"La respuesta no esta vacia\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"enunciado\": \"¿Postman es una herramienta de pruebas de API?\",\n    \"tipoPregunta\": { \"id\": 2 }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Crear pregunta sin enunciado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"La respuesta contiene mensaje de error\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoPregunta\": { \"id\": 1 }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Editar pregunta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"La respuesta no esta vacia\", function () {",
+									"    pm.expect(pm.response.text()).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"enunciado\": \"¿Que es una constante en programacion? (Actualizado)\",\n    \"tipoPregunta\": { \"id\": 1 }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/pregunta",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "pregunta"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar pregunta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Codigo de respuesta es 200 o 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/appeducativa-backend/api/pregunta?id=2",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["appeducativa-backend", "api", "pregunta"],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
